@@ -1,0 +1,30 @@
+<odoo>
+
+    <record id="view_mail_tag_tree" model="ir.ui.view">
+        <field name="name">view.mail.tag.tree</field>
+        <field name="model">mail.communication.tag</field>
+        <field name="arch" type="xml">
+	   <tree editable="bottom">
+                <field name="name" />
+                <field name="active" readonly="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_mail_tags">
+	<field name="name">Mail Communication Tags</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">mail.communication.tag</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+        id="menu_mail_communication_tags"
+	    name="Mail Communication Tags"
+	    action="action_mail_tags"
+	    parent="base.menu_email"
+	    sequence="200"
+    />
+
+
+</odoo>
