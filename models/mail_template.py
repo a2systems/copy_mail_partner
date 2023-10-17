@@ -11,6 +11,25 @@ class MailTemplate(models.Model):
     _inherit = 'mail.template'
 
     def generate_recipients(self, results, res_ids):
+        self.ensure_one()
+        results = super(MailTemplate, self).generate_recipients(results, res_ids)
+        if type(results) == dict:
+            for key, values in results.items():
+                if type(values) == dict:
+                    for other_key,other_values in values.items():
+                        if other_key == 'partner_ids':
+                            partner_ids = other_values
+                            for partner_id in partner_ids:
+                                tag_ids = self.mail_tag_ids.ids
+                                child_partners = self.env['res.partner'].search([('parent_id','=',partner_id)])
+                                for child_partner in child_partners:
+                                    for child_tag in child_partner.mail_tag_ids.ids:
+                                        if child_tag in tag_ids and child_partner.id not in partner_ids:
+                                            partner_ids.append(child_partner.id)
+                                results[key]['partner_ids'] = partner_ids
+        return results
+
+    def x_generate_recipients(self, results, res_ids):
         """Generates the recipients of the template. Default values can ben generated
         instead of the template values if requested by template or context.
         Emails (email_to, email_cc) can be transformed into partners if requested
